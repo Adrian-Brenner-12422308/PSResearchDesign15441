@@ -1,0 +1,367 @@
+---
+title: "PSResearchDesign_Systems"
+author: "Adrian Brenner 12422308"
+date: "2024-03-03"
+output: 
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: pdflatex
+header-includes:
+  - \usepackage{float}
+---
+
+
+This file is part of the PS Research Design Term Paper of Adrian Brenner.
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(dplyr)
+opts_chunk$set(echo=FALSE)
+```
+
+**On the weather day classification:**
+```{r}
+# Load readxl package
+library(readxl)
+
+data <- read_excel("C:/Users/AD/Desktop/HA_PS/WETTER BEREINIGT.xlsx")
+```
+
+```{r}
+# Exclude the first 3 rows and select the 'Mittel' column
+mittel_column <- data$Mittel[-(1:3)]
+
+# Coerce values to numeric
+mittel_column <- as.numeric(as.character(mittel_column))
+
+# Calculate the sum of the 'Mittel' column
+sum_mittel <- sum(mittel_column, na.rm = TRUE)
+
+# Calculate the arithmetic mean
+mean_mittel <- mean(mittel_column, na.rm = TRUE)
+```
+
+
+```{r}
+# Exclude the first 3 rows and select the 'Nieder-' column
+nieder_column <- data$`Nieder-`[-(1:3)] # Using backticks to handle column name with special characters
+
+# Coerce values to numeric
+nieder_column <- as.numeric(as.character(nieder_column))
+
+# Calculate the sum of the 'Nieder-' column
+sum_nieder <- sum(nieder_column, na.rm = TRUE)
+
+# Calculate the arithmetic mean
+mean_nieder <- mean(nieder_column, na.rm = TRUE)
+```
+
+
+
+```{r}
+# Exclude the first 3 rows and select the 'Sonne-' column
+sonne_column <- data$`Sonnen-`[-(1:3)] # Using backticks to handle column name with special characters
+ 
+# Coerce values to numeric
+sonne_column <- as.numeric(as.character(sonne_column))
+
+# Calculate the sum of the 'Sonne-' column
+sum_sonne <- sum(sonne_column, na.rm = TRUE)
+
+# Calculate the arithmetic mean
+mean_sonne <- mean(sonne_column, na.rm = TRUE)
+```
+
+Mean of Temperature: 11.05
+
+11.05 * 1.4 = 15.47
+11.05 * 1.3 = 14.365
+11.05 * 0.7 = 7.735
+11.05 * 0.6 = 6.63
+
+Mean of Precipitation: 3.20
+
+3.20 * 1.4 = 4.48
+3.20 * 1.3 = 4.16
+3.20 * 0.7 = 2.24
+3.20 * 0.6 = 1.92
+
+Mean of Sunshine hours: 5.38
+
+5.38 * 1.4 = 7.532
+5.38 * 1.3 = 6.994
+5.38 * 0.7 = 3.766
+5.38 * 0.6 = 3.228
+
+Obviously there are a lot of strong outlying days in the Sunshine and Rainfall factor, that could present their mean score to be misleading, here it would be possible to opt for a Median approach as well. I did not decide for that, as I choose mean calculations for all other factors as well, consequently a deviation would be more unjust than just in this papers case. A practical mean deficit should become visible with a low amount of "average" sunshine and precipitation classified days.
+
+
+**Temperature Treatment Classification**
+
+```{r}
+# Extract the 'Mittel' column starting from row 4 and convert to numeric
+mittel_column <- as.numeric(as.character(data$Mittel[4:26]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 6.63, 7.735, 14.365, 15.47, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 6.63", "Between 6.63 and 7.735", "Between 7.735 and 14.365", "Between 14.365 and 15.47", "Over 15.47")
+
+# Cut the 'Mittel' column into categories
+mittel_categories <- cut(mittel_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(mittel_categories)
+```
+
+
+```{r}
+# Extract the 'Mittel' column starting from row 27 and convert to numeric
+mittel_column <- as.numeric(as.character(data$Mittel[27:45]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 6.63, 7.735, 14.365, 15.47, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 6.63", "Between 6.63 and 7.735", "Between 7.735 and 14.365", "Between 14.365 and 15.47", "Over 15.47")
+
+# Cut the 'Mittel' column into categories
+mittel_categories <- cut(mittel_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(mittel_categories)
+```
+```{r}
+# Extract the 'Mittel' column starting from row 46 and convert to numeric
+mittel_column <- as.numeric(as.character(data$Mittel[46:64]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 6.63, 7.735, 14.365, 15.47, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 6.63", "Between 6.63 and 7.735", "Between 7.735 and 14.365", "Between 14.365 and 15.47", "Over 15.47")
+
+# Cut the 'Mittel' column into categories
+mittel_categories <- cut(mittel_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(mittel_categories)
+```
+
+For Pre-Treatment Temperature:
+9 bad weather
+5 below average
+8 average
+1 above average
+0 good weather
+
+For Treatment Temperature:
+0 bad weather
+2 below average
+13 average
+2 above average
+2 good weather
+
+For Post-Treatment Temperature:
+0 bad weather
+0 below average
+8 average
+1 above average
+10 good weather
+
+Clear positive skewness for temperature as time goes on
+
+**Precipitation Treatment Classification**
+
+```{r}
+# Extract the 'Nieder-' column starting from row 4 and convert to numeric
+nieder_column <- as.numeric(as.character(data$`Nieder-`[4:26]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 1.92, 2.24, 4.16, 4.48, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 1.92", "Between 1.92 and 2.24", "Between 2.24 and 4.16", "Between 4.16 and 4.48", "Over 4.48")
+
+# Cut the 'Nieder-' column into categories
+nieder_categories <- cut(nieder_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(nieder_categories)
+```
+```{r}
+# Extract the 'Nieder-' column starting from row 27 and convert to numeric
+nieder_column <- as.numeric(as.character(data$`Nieder-`[27:45]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 1.92, 2.24, 4.16, 4.48, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 1.92", "Between 1.92 and 2.24", "Between 2.24 and 4.16", "Between 4.16 and 4.48", "Over 4.48")
+
+# Cut the 'Nieder-' column into categories
+nieder_categories <- cut(nieder_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(nieder_categories)
+```
+```{r}
+# Extract the 'Nieder-' column starting from row 46 and convert to numeric
+nieder_column <- as.numeric(as.character(data$`Nieder-`[46:64]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 1.92, 2.24, 4.16, 4.48, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 1.92", "Between 1.92 and 2.24", "Between 2.24 and 4.16", "Between 4.16 and 4.48", "Over 4.48")
+
+# Cut the 'Nieder-' column into categories
+nieder_categories <- cut(nieder_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(nieder_categories)
+```
+For Pre-Treatment Precipitation:
+5 bad weather
+0 below average
+3 average
+0 above average
+15 good weather
+
+For Treatment Precipitation:
+7 bad weather
+0 below average
+2 average
+0 above average
+10 good weather
+
+For Post-Treatment Precipitation:
+1 bad weather
+0 below average
+0 average
+0 above average
+18 good weather
+
+**Sunshine Treatment Classification**
+
+```{r}
+# Extract the 'Sonnen-' column starting from row 4 and convert to numeric
+sonnen_column <- as.numeric(as.character(data$`Sonnen-`[4:26]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 3.228, 3.766, 6.994, 7.532, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 3.228", "Between 3.228 and 3.766", "Between 3.766 and 6.994", "Between 6.994 and 7.532", "Over 7.532")
+
+# Cut the 'Sonnen-' column into categories
+sonnen_categories <- cut(sonnen_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(sonnen_categories)
+```
+```{r}
+# Extract the 'Sonnen-' column starting from row 27 and convert to numeric
+sonnen_column <- as.numeric(as.character(data$`Sonnen-`[27:45]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 3.228, 3.766, 6.994, 7.532, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 3.228", "Between 3.228 and 3.766", "Between 3.766 and 6.994", "Between 6.994 and 7.532", "Over 7.532")
+
+# Cut the 'Sonnen-' column into categories
+sonnen_categories <- cut(sonnen_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(sonnen_categories)
+```
+```{r}
+# Extract the 'Sonnen-' column starting from row 46 and convert to numeric
+sonnen_column <- as.numeric(as.character(data$`Sonnen-`[46:64]))
+
+# Define the break points for the categories
+breaks <- c(-Inf, 3.228, 3.766, 6.994, 7.532, Inf)
+
+# Define the labels for the categories
+labels <- c("Under 3.228", "Between 3.228 and 3.766", "Between 3.766 and 6.994", "Between 6.994 and 7.532", "Over 7.532")
+
+# Cut the 'Sonnen-' column into categories
+sonnen_categories <- cut(sonnen_column, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Display the frequency of each category
+table(sonnen_categories)
+```
+For Pre-Treatment Sunshine:
+16 bad weather
+0 below average
+0 average
+0 above average
+7 good weather
+
+For Treatment Sunshine:
+7 bad weather
+0 below average
+7 average
+0 above average
+5 good weather
+
+For Post-Treatment Sunshine:
+6 bad weather
+0 below average
+5 average
+0 above average
+8 good weather
+
+**Cumulative Weather Classsification**
+
+
+Here I just cross reference alll results and look how many days are true for at least 2 out of 3 variables (Temperature, Precipitation, Sunshine).
+
+For Pre-Treatment:
+9 bad weather
+0 below average
+3 average
+0 above average
+7 good weather
+
+For Treatment:
+6 bad weather
+0 below average
+7 average
+0 above average
+5 good weather
+
+For Post-Treatment:
+6 bad weather
+0 below average
+5 average
+0 above average
+10 good weather
+
+It becomes obvious, that the threshold of the classified above and below average weather is not efficiently chosen, as it is to slim to actually encapsulate any instances of 2 our of 3 variables fitting. A lower threshold of 15% might me much more suitable, or even a raise of the good and bad classifications to 50%. Anything that raises the slim 10% margin window will help to make those classifications more efficent, as per this papers classification they are unused.
+
+**On the calculation of children per family household:**
+
+52.8% of household have 1 child.
+
+36.3% have 2.
+
+8.1% have 3.
+
+2.7% 4 or more, so here I use 4.2 as a proposed calulation number. (As most of those household most likely have 4 children.)
+
+As per p.6 of Landeshauptstadt Bayern: https://stadt.muenchen.de/dam/jcr:d84c2a4e-6bfb-453b-8951-65aae1da174a/Kurzinformation_Familien_in_Muenchen_181012.pdf
+
+```{r}
+0.528 * 1 + 0.363 * 2 + 0.081 * 3 + 0.027 * 4.2 
+```
+So a rough average of 1.6 children per family household.
+
+**DID Model Calculation**
+-> Done with inline Math directly in LaTeX.
+
+Adrian Brenner (12422308) for GSI LMU - PS Research Design (15441) - Prof. Dr. Alexander Wuttke
